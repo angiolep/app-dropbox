@@ -10,8 +10,9 @@
   <p>Drag any of the following data types:</p>
     <ul>
       <li><code>text/plain</code></li>
+      <li><code>application/pdf</code></li>
     </ul>
-  <app-dropbox>
+  <app-dropbox types='["text/plain","application/pdf"]'>
     <p>And drop it here!</p>
   </app-dropbox>
 
@@ -21,7 +22,18 @@
     var detail = document.querySelector('#detail');
     document.querySelector('app-dropbox')
       .addEventListener('data-drop', function(ev) {
-        detail.innerHTML = '<p>You just dropped: <code>' + JSON.stringify(ev.detail) + '</code></p>';
+        switch (ev.detail.type) {
+          case 'text/plain': {
+            var text = ev.detail.value;
+            detail.innerHTML = '<p>You just dropped text: <code>' + JSON.stringify(ev.detail) + '</code></p>';
+            break;
+          }
+          case 'application/pdf': {
+            var file = ev.detail.value;
+            detail.innerHTML = '<p>You just dropped file: <code>' + JSON.stringify({type: ev.detail.type, value: {name: ev.detail.value.name}}) + '</code></p>';
+            break;
+          }
+    }
       });
   </script>
 </body>

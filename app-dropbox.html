@@ -6,27 +6,33 @@ A web-component dropbox
 ### Example:
 
 ```html
-<app-dropbox>
+<app-dropbox types='["text/plain","application/pdf"]'>
   <p>Drop your data here!</p>
 </app-dropbox>
 
 <script>
 document.querySelect('app-drop')
   .addEventListener('data-drop', function(ev) {
-    console.log(ev.detail);
+    switch (ev.detail.type) {
+      case 'text/plain': {
+        var text = ev.detail.value;
+        // ... use text ...
+        break;
+      }
+      case 'application/pdf': {
+        var file = ev.detail.value;
+        // ... read file ...
+        break;
+      }
+    }
   });
 </script>
 ```
 
-### Data types
-``<app-dropbox>`` expects you to drop some ``text/plain`` data. 
-
-Any other data type is not supported yet.
-
 
 @demo
 -->
-<dom-module id="app-dropbox" >
+<dom-module id="app-dropbox" attributes="types">
 <template>
   <style>
     :host {
@@ -107,8 +113,19 @@ Any other data type is not supported yet.
   Polymer({
     is: 'app-dropbox',
 
+    properties: {
+      /**
+       * Array of MIME types you wish to drop.
+       * See https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Recommended_Drag_Types
+       */
+      types: {
+        type: Array,
+        value: function() {return [];}
+      }
+    },
+
     ready: function() {
-      setup(this.$.overlay, ['text/plain'], function(detail) {
+      setup(this.$.overlay, this.types, function(detail) {
         this.fire('data-drop', detail);
       }.bind(this));
     }
@@ -117,8 +134,8 @@ Any other data type is not supported yet.
      * The `data-drop` event is fired when some data is dropped in the dropbox area.
      *
      * Event detail gives you the following property:
-     * - ``type`` is MIME type of the dropped data 
-     * - ``value`` is the value
+     * - ``type`` is MIME type of the data 
+     * - ``value`` is the value (could be text or file)
      *
      * @event data-drop
      * @param {Object} detail
