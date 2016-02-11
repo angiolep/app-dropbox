@@ -3,26 +3,129 @@
 <!--
 A web-component dropbox
 
-Example:
+### Example:
 
 ```html
-<app-dropbox></app-dropbox>
+<app-dropbox>
+  <p>Drop your data here!</p>
+</app-dropbox>
+
+<script>
+document.querySelect('app-drop')
+  .addEventListener('data-drop', function(ev) {
+    console.log(ev.detail);
+  });
+</script>
 ```
+
+### Data types
+``<app-dropbox>`` expects you to drop some ``text/plain`` data. 
+
+Any other data type is not supported yet.
+
 
 @demo
 -->
 <dom-module id="app-dropbox" >
 <template>
-  <p>app-dropbox</p>
+  <style>
+    :host {
+      display: block;
+      position: relative;
+    }
+
+    .content-wrapper ::content {
+      display: block;
+      background-color: lightyellow;
+      border: 1px dotted orange;
+      padding: 4px;
+    }
+
+    #overlay {
+      display: block;
+      position: absolute;
+      top: -3px; left: -3px;
+      width: 100%; height: 100%;
+      opacity: 0;
+      /* TODO @apply(--app-dropbox-theme); */
+      background-color: orange;
+      border: 3px dashed red;
+    }
+  </style>
+  
+  <div class="content-wrapper">
+    <content></content>
+  </div>
+
+  <div id="overlay"></div>
 </template>
+
 
 <script>
 ;!function() {
 
+  var setup = function(overlay, types, fire) {
+    overlay.addEventListener('dragenter', function(ev) {
+      ev.target.style.opacity = 0.75;
+    });
+
+    overlay.addEventListener('dragover', function(ev) {
+      // following is necessary to allow us to drop
+      ev.preventDefault();
+      return false;
+    });
+
+    overlay.addEventListener('dragleave', function(ev) {
+      ev.target.style.opacity = 0;
+    });
+
+    overlay.addEventListener('drop', function(ev) {
+      if (ev.stopPropagation) {
+        ev.stopPropagation(); 
+      }
+      types.forEach(function(type) {
+        var data = ev.dataTransfer.getData(type);
+        if (data !== '') {
+          fire({type: type, value: data});
+        } 
+        else {
+          // maybe files have been dropped?
+          [].forEach.call(ev.dataTransfer.files, function(file) {
+            if (file.type === type) {
+              fire({type: type, value: file});
+            }
+          });
+        }
+      });
+      ev.target.style.opacity = 0;
+      ev.preventDefault();
+      return false;
+    });
+  };
+
+
   Polymer({
-    is: 'app-dropbox'
+    is: 'app-dropbox',
+
+    ready: function() {
+      setup(this.$.overlay, ['text/plain'], function(detail) {
+        this.fire('data-drop', detail);
+      }.bind(this));
+    }
+
+    /**
+     * The `data-drop` event is fired when some data is dropped in the dropbox area.
+     *
+     * Event detail gives you the following property:
+     * - ``type`` is MIME type of the dropped data 
+     * - ``value`` is the value
+     *
+     * @event data-drop
+     * @param {Object} detail
+     *
+     */
   });
-  
+
 }();
 </script>
 </dom-module>

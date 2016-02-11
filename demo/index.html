@@ -7,7 +7,23 @@
 </head>
 
 <body>
-  <app-dropbox></app-dropbox>
+  <p>Drag any of the following data types:</p>
+    <ul>
+      <li><code>text/plain</code></li>
+    </ul>
+  <app-dropbox>
+    <p>And drop it here!</p>
+  </app-dropbox>
+
+  <p id="detail"></p>
+
+  <script>
+    var detail = document.querySelector('#detail');
+    document.querySelector('app-dropbox')
+      .addEventListener('data-drop', function(ev) {
+        detail.innerHTML = '<p>You just dropped: <code>' + JSON.stringify(ev.detail) + '</code></p>';
+      });
+  </script>
 </body>
 </html>
 
