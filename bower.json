@@ -1,0 +1,30 @@
+{
+  "name": "app-dropbox",
+  "homepage": "https://github.com/angiolep/app-dropbox",
+  "authors": [
+    "Paolo Angioletti <paolo.angioletti@gmail.com>"
+  ],
+  "description": "A web-component drop box",
+  "main": "app-dropbox.html",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "web-components"
+  ],
+  "license": "http://unlicense.org",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "~1.2.3"
+  },
+  "devDependencies": {
+    "web-component-tester": "~4.1.0",
+    "iron-component-page": "PolymerElements/iron-component-page#~1.1.4"
+  }
+}
