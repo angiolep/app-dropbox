@@ -13,7 +13,7 @@
       <li><code>application/pdf</code></li>
     </ul>
   <app-dropbox types='["text/plain","application/pdf"]'>
-    <p>And drop it here!</p>
+    <p>... and drop it here!</p>
   </app-dropbox>
 
   <p id="detail"></p>
@@ -22,7 +22,8 @@
     var detail = document.querySelector('#detail');
     document.querySelector('app-dropbox')
       .addEventListener('data-drop', function(ev) {
-        switch (ev.detail.type) {
+        var type = ev.detail.type;
+        switch (type) {
           case 'text/plain': {
             var text = ev.detail.value;
             detail.innerHTML = '<p>You just dropped text: <code>' + JSON.stringify(ev.detail) + '</code></p>';
@@ -30,10 +31,10 @@
           }
           case 'application/pdf': {
             var file = ev.detail.value;
-            detail.innerHTML = '<p>You just dropped file: <code>' + JSON.stringify({type: ev.detail.type, value: {name: ev.detail.value.name}}) + '</code></p>';
+            detail.innerHTML = '<p>You just dropped file: <code>' + JSON.stringify({type: type, value: {name: file.name}}) + '</code></p>';
             break;
           }
-    }
+        }
       });
   </script>
 </body>

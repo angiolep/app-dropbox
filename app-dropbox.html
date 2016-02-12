@@ -29,7 +29,6 @@ document.querySelect('app-drop')
 </script>
 ```
 
-
 @demo
 -->
 <dom-module id="app-dropbox" attributes="types">
@@ -44,14 +43,16 @@ document.querySelect('app-drop')
       display: block;
       background-color: lightyellow;
       border: 1px dotted orange;
-      padding: 4px;
+      padding: 0 2px;
     }
 
     #overlay {
       display: block;
       position: absolute;
-      top: -3px; left: -3px;
-      width: 100%; height: 100%;
+      top: 0px; 
+      left: 0px;
+      width: 100%; 
+      height: 100%;
       opacity: 0;
       /* TODO @apply(--app-dropbox-theme); */
       background-color: orange;
@@ -70,46 +71,6 @@ document.querySelect('app-drop')
 <script>
 ;!function() {
 
-  var setup = function(overlay, types, fire) {
-    overlay.addEventListener('dragenter', function(ev) {
-      ev.target.style.opacity = 0.75;
-    });
-
-    overlay.addEventListener('dragover', function(ev) {
-      // following is necessary to allow us to drop
-      ev.preventDefault();
-      return false;
-    });
-
-    overlay.addEventListener('dragleave', function(ev) {
-      ev.target.style.opacity = 0;
-    });
-
-    overlay.addEventListener('drop', function(ev) {
-      if (ev.stopPropagation) {
-        ev.stopPropagation(); 
-      }
-      types.forEach(function(type) {
-        var data = ev.dataTransfer.getData(type);
-        if (data !== '') {
-          fire({type: type, value: data});
-        } 
-        else {
-          // maybe files have been dropped?
-          [].forEach.call(ev.dataTransfer.files, function(file) {
-            if (file.type === type) {
-              fire({type: type, value: file});
-            }
-          });
-        }
-      });
-      ev.target.style.opacity = 0;
-      ev.preventDefault();
-      return false;
-    });
-  };
-
-
   Polymer({
     is: 'app-dropbox',
 
@@ -125,9 +86,43 @@ document.querySelect('app-drop')
     },
 
     ready: function() {
-      setup(this.$.overlay, this.types, function(detail) {
-        this.fire('data-drop', detail);
-      }.bind(this));
+      this.$.overlay.addEventListener('dragenter', function(ev) {
+        ev.target.style.opacity = 0.75;
+      });
+
+      this.$.overlay.addEventListener('dragover', function(ev) {
+        // following is necessary to allow us to drop
+        ev.preventDefault();
+        return false;
+      });
+
+      this.$.overlay.addEventListener('dragleave', function(ev) {
+        ev.target.style.opacity = 0;
+      });
+
+      var self = this;
+      this.$.overlay.addEventListener('drop', function(ev) {
+        if (ev.stopPropagation) {
+          ev.stopPropagation(); 
+        }
+        self.types.forEach(function(type) {
+          var data = ev.dataTransfer.getData(type);
+          if (data !== '') {
+            self.fire('data-drop', {type: type, value: data});
+          } 
+          else {
+            // maybe files have been dropped?
+            [].forEach.call(ev.dataTransfer.files, function(file) {
+              if (file.type === type) {
+                self.fire('data-drop', {type: type, value: file});
+              }
+            });
+          }
+        });
+        ev.target.style.opacity = 0;
+        ev.preventDefault();
+        return false;
+      });
     }
 
     /**
