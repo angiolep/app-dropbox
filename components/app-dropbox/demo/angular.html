@@ -1,0 +1,48 @@
+<!doctype html>
+<html ng-app="ppaComponents">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../app-dropbox.html">
+
+  <script src="../../angular/angular.min.js"></script>
+  <script>angular.module('ppaComponents', []);</script>
+  <script src="../ppaDropbox.js"></script>
+</head>
+
+<body ng-controller="ppaController">
+  <p>Drag any of the following data types:</p>
+    <ul>
+      <li><code>text/plain</code></li>
+      <li><code>application/pdf</code></li>
+    </ul>
+  <ppa-dropbox 
+    types='["text/plain","application/pdf"]' 
+    on-data-drop="onDataDrop(event)">
+    <p>... and drop it here!</p>
+  </ppa-dropbox>
+
+  <p>{{message}}</p>
+
+  <script>
+    angular.module('ppaComponents')
+      .controller('ppaController', function($scope) {
+        $scope.onDataDrop = function(ev) {
+          var type = ev.detail.type;
+          switch (type) {
+            case 'text/plain': {
+              $scope.message = JSON.stringify(ev.detail);
+              break;
+            }
+            case 'application/pdf': {
+              var file = ev.detail.file;
+              $scope.message = JSON.stringify({type: type, file: {name: file.name}});
+              break;
+            }
+          }
+        }
+      })
+  </script>
+</body>
+</html>
+

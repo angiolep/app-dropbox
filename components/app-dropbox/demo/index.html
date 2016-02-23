@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../app-dropbox.html">
+</head>
+
+<body>
+  <p>Drag any of the following data types:</p>
+    <ul>
+      <li><code>text/plain</code></li>
+      <li><code>application/pdf</code></li>
+    </ul>
+  <app-dropbox types='["text/plain","application/pdf"]'>
+    <p>... and drop it here!</p>
+  </app-dropbox>
+
+  <p id="detail"></p>
+
+  <script>
+    var detail = document.querySelector('#detail');
+    document.querySelector('app-dropbox')
+      .addEventListener('data-drop', function(ev) {
+        var type = ev.detail.type;
+        switch (type) {
+          case 'text/plain': {
+            detail.innerHTML = '<p>You just dropped text: <code>' + JSON.stringify(ev.detail) + '</code></p>';
+            break;
+          }
+          case 'application/pdf': {
+            var file = ev.detail.file;
+            detail.innerHTML = '<p>You just dropped file: <code>' + JSON.stringify({type: type, file: {name: file.name}}) + '</code></p>';
+            break;
+          }
+        }
+      });
+  </script>
+</body>
+</html>
+
