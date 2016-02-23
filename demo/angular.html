@@ -31,13 +31,12 @@
           var type = ev.detail.type;
           switch (type) {
             case 'text/plain': {
-              var text = ev.detail.value;
               $scope.message = JSON.stringify(ev.detail);
               break;
             }
             case 'application/pdf': {
-              var file = ev.detail.value;
-              $scope.message = JSON.stringify({type: type, value: {name: file.name}});
+              var file = ev.detail.file;
+              $scope.message = JSON.stringify({type: type, file: {name: file.name}});
               break;
             }
           }

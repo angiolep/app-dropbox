@@ -25,13 +25,12 @@
         var type = ev.detail.type;
         switch (type) {
           case 'text/plain': {
-            var text = ev.detail.value;
             detail.innerHTML = '<p>You just dropped text: <code>' + JSON.stringify(ev.detail) + '</code></p>';
             break;
           }
           case 'application/pdf': {
-            var file = ev.detail.value;
-            detail.innerHTML = '<p>You just dropped file: <code>' + JSON.stringify({type: type, value: {name: file.name}}) + '</code></p>';
+            var file = ev.detail.file;
+            detail.innerHTML = '<p>You just dropped file: <code>' + JSON.stringify({type: type, file: {name: file.name}}) + '</code></p>';
             break;
           }
         }

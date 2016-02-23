@@ -14,9 +14,9 @@ angular.module('ppaComponents')
       link: function(scope, iElement, iAttrs) {
         var types = angular.fromJson(scope.types) || [];
         // it assumes jqLite instead of jQuery
-        var appDropbox = angular.element(iElement.children()[0]);
-        appDropbox.attr('types', scope.types);
-        appDropbox.on('data-drop', function(event) {
+        var appDropbox = angular.element(iElement.children()[0])[0];
+        appDropbox.setAttribute('types', scope.types);
+        appDropbox.addEventListener('data-drop', function(event) {
           scope.$apply(function() {
             scope.onDataDrop({event: event});
           });

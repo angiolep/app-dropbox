@@ -15,12 +15,12 @@ document.querySelect('app-drop')
   .addEventListener('data-drop', function(ev) {
     switch (ev.detail.type) {
       case 'text/plain': {
-        var text = ev.detail.value;
+        var text = ev.detail.data;
         // ... use text ...
         break;
       }
       case 'application/pdf': {
-        var file = ev.detail.value;
+        var file = ev.detail.file;
         // ... read file ...
         break;
       }
@@ -108,13 +108,13 @@ document.querySelect('app-drop')
         self.types.forEach(function(type) {
           var data = ev.dataTransfer.getData(type);
           if (data !== '') {
-            self.fire('data-drop', {type: type, value: data});
+            self.fire('data-drop', {type: type, data: data});
           } 
           else {
             // maybe files have been dropped?
             [].forEach.call(ev.dataTransfer.files, function(file) {
               if (file.type === type) {
-                self.fire('data-drop', {type: type, value: file});
+                self.fire('data-drop', {type: type, file: file});
               }
             });
           }
